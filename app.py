@@ -197,7 +197,7 @@ if st.sidebar.button("⚙️ Procesar Triaje Clínico", type="primary"):
 
     st.markdown("---")
     
-    st.markdown("### 🩺 Impresión Clínica Presuntiva")
+    st.markdown("###  Impresión Clínica Presuntiva")
     st.write(f"**Diagnóstico Principal:** {dx_principal}")
     
     if dx_diferenciales:
@@ -206,7 +206,7 @@ if st.sidebar.button("⚙️ Procesar Triaje Clínico", type="primary"):
             st.write(f"- *{dx}*")
 
     st.markdown("---")
-    st.markdown("### 🏥 Conducta Asistencial y Plan de Manejo")
+    st.markdown("###  Conducta Asistencial y Plan de Manejo")
     st.info(f"**Conducta:** {conducta}")
 
     st.markdown("**Órdenes Médicas / Indicaciones Inmediatas:**")
