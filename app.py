@@ -37,14 +37,22 @@ if st.sidebar.button("🔍 Evaluar Diagnóstico", type="primary"):
         nivel_urgencia, diagnostico, tipo_alerta = "Sin Urgencia", "No se detectan patrones de riesgo respiratorio", "info"
         recomendacion = "Mantenga hábitos de vida saludables."
 
-    if tipo_alerta == "error": st.error(f"🚨 **Nivel de Prioridad:** {nivel_urgencia}")
-    elif tipo_alerta == "warning": st.warning(f"⚠️ **Nivel de Prioridad:** {nivel_urgencia}")
-    elif tipo_alerta == "success": st.success(f"✅ **Nivel de Prioridad:** {nivel_urgencia}")
-    else: st.info(f"ℹ️ **Nivel de Prioridad:** {nivel_urgencia}")
+    # Nivel de Urgencia
+    if tipo_alerta == "error": 
+        st.error(f"🚨 **Nivel de Prioridad:** {nivel_urgencia}")
+    elif tipo_alerta == "warning": 
+        st.warning(f"⚠️ **Nivel de Prioridad:** {nivel_urgencia}")
+    elif tipo_alerta == "success": 
+        st.success(f"✅ **Nivel de Prioridad:** {nivel_urgencia}")
+    else: 
+        st.info(f"ℹ️ **Nivel de Prioridad:** {nivel_urgencia}")
 
-    col1, col2 = st.columns(2)
-    col1.metric("Diagnóstico Presuntivo", diagnostico)
-    col2.metric("Tiempo de Evolución", f"{dias_sintomas} días")
+    # Diagnóstico y Tiempo de Evolución
+    st.markdown("### 🩺 **Diagnóstico Presuntivo**")
+    st.info(f"**{diagnostico}**")
+    
+    st.markdown(f"⏱️ **Tiempo de Evolución:** {dias_sintomas} días")
 
-    st.markdown("### 💡 Recomendación Médica")
+    # Recomendación Médica
+    st.markdown("### 💡 **Recomendación Médica**")
     st.write(recomendacion)
