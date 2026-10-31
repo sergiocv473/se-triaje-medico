@@ -1,58 +1,65 @@
 import streamlit as st
 
-st.set_page_config(page_title="Sistema Experto - Triaje Médico", page_icon="🩺", layout="centered")
+st.set_page_config(page_title="Sistema de Triaje Respiratorio", layout="centered")
 
-st.title("🩺 Sistema Experto de Diagnóstico Médico Rápido")
-st.caption("Especialidad: Neumología y Salud Respiratoria")
+# Encabezado institucional estilo ficha clínica
+st.title("Módulo de Triaje Respiratorio")
+st.caption("Protocolo Institucional de Evaluación Preliminar de Pacientes")
 st.markdown("---")
 
-st.sidebar.header("📋 Evaluación del Paciente")
-edad = st.sidebar.number_input("Edad del paciente", min_value=1, max_value=120, value=35)
-genero = st.sidebar.selectbox("Género", ["Femenino", "Masculino"])
+# Formulario de Admisión
+st.sidebar.header("Admisión del Paciente")
+edad = st.sidebar.number_input("Edad (años)", min_value=1, max_value=120, value=35)
+genero = st.sidebar.selectbox("Sexo", ["Femenino", "Masculino"])
 
-st.sidebar.subheader("Síntomas Presentes")
-dolor_pecho = st.sidebar.checkbox("Dolor precordial / Pecho opresivo")
-dificultad_respirar = st.sidebar.checkbox("Dificultad para respirar (Disnea)")
+st.sidebar.subheader("Sintomatología")
+dolor_pecho = st.sidebar.checkbox("Dolor torácico / Opresión")
+dificultad_respirar = st.sidebar.checkbox("Dificultad respiratoria (Disnea)")
 fiebre = st.sidebar.checkbox("Fiebre (>= 38°C)")
 tos = st.sidebar.checkbox("Tos persistente")
-secrecion_nasal = st.sidebar.checkbox("Congestión / Secreción nasal")
-dias_sintomas = st.sidebar.slider("Días de evolución con los síntomas", 1, 30, 3)
+secrecion_nasal = st.sidebar.checkbox("Congestión / Rinorrea")
+dias_sintomas = st.sidebar.slider("Tiempo de evolución (días)", 1, 30, 3)
 
-if st.sidebar.button("🔍 Evaluar Diagnóstico", type="primary"):
-    st.subheader("📊 Reporte de Evaluación de Triaje")
+if st.sidebar.button("Procesar Triaje", type="primary"):
+    st.subheader("Resultado de la Clasificación")
     
     if dolor_pecho and dificultad_respirar:
-        nivel_urgencia, diagnostico, tipo_alerta = "Urgencia Alta (Riesgo Vital)", "Posible Síndrome Coronario Agudo o Edema Pulmonar", "error"
-        recomendacion = "Derivación inmediata a urgencias hospitalarias. No conduzca por sus propios medios."
+        prioridad = "PRIORIDAD I — Emergencia (Riesgo Vital)"
+        alerta_fn = st.error
+        diagnostico = "Sospecha de evento cardiovascular agudo o insuficiencia respiratoria severa."
+        conducta = "Ingreso inmediato a Shock Trauma / Urgencias. Requerida valoración médica prioritaria."
     elif fiebre and dificultad_respirar and tos:
-        nivel_urgencia, diagnostico, tipo_alerta = "Urgencia Alta", "Cuadro compatible con Neumonía / Infección Respiratoria Baja", "error"
-        recomendacion = "Requiere evaluación médica presencial urgente y radiografía de tórax."
+        prioridad = "PRIORIDAD II — Urgencia Mayor"
+        alerta_fn = st.error
+        diagnostico = "Infección de vías respiratorias bajas (probable neumonía)."
+        conducta = "Derivar a consulta médica general el mismo día. Solicitar radiografía de tórax."
     elif (fiebre and tos) or (tos and dias_sintomas > 7):
-        nivel_urgencia, diagnostico, tipo_alerta = "Urgencia Media", "Sospecha de Bronquitis Aguda o Infección en Evolución", "warning"
-        recomendacion = "Programe una cita médica en atención primaria dentro de 24 a 48 horas."
+        prioridad = "PRIORIDAD III — Urgencia Menor"
+        alerta_fn = st.warning
+        diagnostico = "Cuadro agudo de vías respiratorias (probable bronquitis o infección viral en evolución)."
+        conducta = "Programar atención ambulatoria en consultorio externo (24-48 horas)."
     elif secrecion_nasal or tos:
-        nivel_urgencia, diagnostico, tipo_alerta = "Urgencia Baja", "Sintomatología compatible con Resfriado Común / Rinitis", "success"
-        recomendacion = "Reposo, hidratación constante y vigilancia de signos de alarma."
+        prioridad = "PRIORIDAD IV — Patología No Urgente"
+        alerta_fn = st.success
+        diagnostico = "Sintomatología compatible con resfriado común o rinitis aguda."
+        conducta = "Manejo ambulatorio sintomático, hidratación y pautas de alarma."
     else:
-        nivel_urgencia, diagnostico, tipo_alerta = "Sin Urgencia", "No se detectan patrones de riesgo respiratorio", "info"
-        recomendacion = "Mantenga hábitos de vida saludables."
+        prioridad = "PRIORIDAD V — Consulta General"
+        alerta_fn = st.info
+        diagnostico = "Sin criterios de prioridad respiratoria al momento de la evaluación."
+        conducta = "Continuar con controles habituales de salud."
 
-    # Nivel de Urgencia
-    if tipo_alerta == "error": 
-        st.error(f"🚨 **Nivel de Prioridad:** {nivel_urgencia}")
-    elif tipo_alerta == "warning": 
-        st.warning(f"⚠️ **Nivel de Prioridad:** {nivel_urgencia}")
-    elif tipo_alerta == "success": 
-        st.success(f"✅ **Nivel de Prioridad:** {nivel_urgencia}")
-    else: 
-        st.info(f"ℹ️ **Nivel de Prioridad:** {nivel_urgencia}")
-
-    # Diagnóstico y Tiempo de Evolución
-    st.markdown("### 🩺 **Diagnóstico Presuntivo**")
-    st.info(f"**{diagnostico}**")
+    # Bloque de clasificación clínica
+    alerta_fn(f"**Nivel de Atención:** {prioridad}")
     
-    st.markdown(f"⏱️ **Tiempo de Evolución:** {dias_sintomas} días")
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown("**Impresión Clínica Presuntiva:**")
+        st.write(diagnostico)
+    with col2:
+        st.markdown("**Evolución:**")
+        st.write(f"{dias_sintomas} días")
 
-    # Recomendación Médica
-    st.markdown("### 💡 **Recomendación Médica**")
-    st.write(recomendacion)
+    st.markdown("---")
+    st.markdown("**Conducta y Manejo Sugerido:**")
+    st.info(conducta)
